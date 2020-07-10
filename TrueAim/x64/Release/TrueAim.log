@@ -1,0 +1,51 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(453,5): warning MSB8004: Das Output-Verzeichnis endet nicht mit einem nachstehenden Schrägstrich. Der Schrägstrich wird in dieser Buildinstanz hinzugefügt, da er für die ordnungsgemäße Auswertung des Output-Verzeichnisses erforderlich ist.
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(467,5): warning MSB8028: Das Zwischenverzeichnis (x64\Release\) enthält freigegebene Dateien aus einem anderen Projekt (TrueAim.vcxproj, ZeyroxFN.vcxproj). Dies kann zu einem falschen Bereinigungs- und Neuerstellungsverhalten führen.
+  Assembling spoofinternal.asm...
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1016,5): warning MSB8027: Mehrere Dateien mit dem Namen FortUpdaters.cpp führen zu Ausgaben am selben Speicherort. Dadurch kann ein falsches Buildergebnis entstehen. Die betroffenen Dateien sind Header Files\FortUpdaters\FortUpdaters.cpp, Source Files\FortUpdaters\FortUpdaters.cpp.
+  Config.cpp
+  FortUpdaters.cpp
+  core.cpp
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(87,44): warning C4244: "Argument": Konvertierung von "float" in "DWORD", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(330,30): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(331,32): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(332,31): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(338,36): warning C4244: "=": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(339,38): warning C4244: "=": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(340,36): warning C4244: "=": Konvertierung von "float" in "int", möglicher Datenverlust
+  menu.cpp
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(118,33): warning C4305: "Argument": Verkürzung von "double" in "float"
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(120,41): warning C4305: "Argument": Verkürzung von "double" in "float"
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(121,69): warning C4305: "Argument": Verkürzung von "double" in "float"
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(221,45): warning C4305: "=": Verkürzung von "float" in "bool"
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(548,45): warning C4244: "Argument": Konvertierung von "float" in "DWORD", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(701,72): warning C4305: "Argument": Verkürzung von "double" in "float"
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(773,16): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(788,15): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
+  offsets.cpp
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\offsets\offsets.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+  settings.cpp
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\settings\settings.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+  Util.cpp
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\util\Util.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+  dllmain.cPP
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
+C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\dllmain.cPP : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+  imgui.cpp
+  imgui_draw.cpp
+  imgui_impl_dx11.cpp
+x64\Release\FortUpdaters.obj : warning LNK4042: Objekt mehrmals angegeben; zusätzliche Objekte werden ignoriert.
+     Bibliothek ".\x64\Release\Release\TrueAim.lib" und Objekt ".\x64\Release\Release\TrueAim.exp" werden erstellt.
+LINK : warning LNK4098: Standardbibliothek "LIBCMT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULTLIB:Bibliothek verwenden.
+  Code wird generiert.
+  3 of 1580 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    22 functions had inline decision re-evaluated but remain unchanged
+  Codegenerierung ist abgeschlossen.
+  TrueAim.vcxproj -> C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\.\x64\Release\Release\TrueAim.dll
