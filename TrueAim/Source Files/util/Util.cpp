@@ -303,12 +303,12 @@ namespace Util {
 	}
 
 	BOOLEAN Initialize() {
-		// GObjects
-		auto addr = FindPattern("\x48\x8B\x05\x00\x00\x00\x00\x4C\x8D\x3C\xCD", "xxx????xxxx");
-		if (!addr) {
-			MessageBox(0, L"Failed to find GObjects", L"Failure", 0);
-			return FALSE;
-		}
+			// GObjects
+			auto addr = FindPattern("\x48\x8B\x05\x7E\x38\x79\x05\x4C\x8D\x34\xCD", "xxx????xxxx");
+			if (!addr) {
+				MessageBox(0, L"Failed to find GObjects", L"Failure", 0);
+				return FALSE;
+			}
 
 		objects = reinterpret_cast<decltype(objects)>(RELATIVE_ADDR(addr, 7));
 
