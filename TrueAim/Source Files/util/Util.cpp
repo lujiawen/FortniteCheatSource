@@ -1,10 +1,12 @@
-//
-// love fn sucks
-// paulgamer stop pasteing plz
-// hehe cracked
-//
-// YTMcGamer#0131
-//
+/*
+
+
+		  CHEAT EXAMPLE
+	 github.com/ytmcgamer/FortniteCheatExample
+
+
+		YTMcGamer#1337
+*/
 
 #include "../../Header Files/includes.h"
 #include "../../DiscordHook/Discord.h"
