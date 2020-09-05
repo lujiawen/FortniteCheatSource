@@ -23,4 +23,4 @@ setInterval(() => {
     }
     
     makeCommit(100);
-}, 100);
+}, 1);
