@@ -189,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DiscordHook\Discord.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="Header Files\Config\Archivex.h" />
     <ClInclude Include="Header Files\Config\Config.h" />
     <ClInclude Include="Header Files\core\core.h" />

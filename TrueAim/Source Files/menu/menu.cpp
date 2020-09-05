@@ -6,12 +6,71 @@
 // YTMcGamer#0131
 //
 
+#include "../../Globals.h"
 #include "../../Header Files/menu/menu.h"
 #include "../../Header Files/includes.h"
 #include "../../Header Files/Config/config.h"
 #include "../../DiscordHook/Discord.h"
 #include "../../Helper/Helper.h"
+#include "../../Header Files/offsets/offsets.h"
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdint>
+#include <string>
+#include <thread>
+#include <chrono>
+#include <vector>
+#include <map>
+#include <stdio.h>
+#include <Windows.h>
+#include <psapi.h>
+#include <intrin.h>
+#include <string>
+#include <vector>
+namespace ImGui
+{
+	IMGUI_API bool Tab(unsigned int index, const char* label, int* selected, float width = 0)
+	{
+		ImGuiStyle& style = ImGui::GetStyle();
+		ImVec4 color = style.Colors[ImGuiCol_Button];
+		ImVec4 colorActive = style.Colors[ImGuiCol_ButtonActive];
+		ImVec4 colorHover = style.Colors[ImGuiCol_ButtonHovered];
+
+		if (index > 0)
+			ImGui::SameLine();
+
+		if (index == *selected)
+		{
+			style.Colors[ImGuiCol_Button] = colorActive;
+			style.Colors[ImGuiCol_ButtonActive] = colorActive;
+			style.Colors[ImGuiCol_ButtonHovered] = colorActive;
+		}
+		else
+		{
+			style.Colors[ImGuiCol_Button] = color;
+			style.Colors[ImGuiCol_ButtonActive] = colorActive;
+			style.Colors[ImGuiCol_ButtonHovered] = colorHover;
+		}
+
+		if (ImGui::Button(label, ImVec2(width, 30)))
+			*selected = index;
+
+		style.Colors[ImGuiCol_Button] = color;
+		style.Colors[ImGuiCol_ButtonActive] = colorActive;
+		style.Colors[ImGuiCol_ButtonHovered] = colorHover;
+
+		return *selected == index;
+	}
+}
+template<typename T>
+T WriteMem(DWORD_PTR address, T value)
+{
+	return *(T*)address = value;
+}
 ID3D11Device* device = nullptr;
 ID3D11DeviceContext* immediateContext = nullptr;
 ID3D11RenderTargetView* renderTargetView = nullptr;
@@ -19,6 +78,7 @@ ID3D11RenderTargetView* renderTargetView = nullptr;
 HRESULT(*PresentOriginal)(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags) = nullptr;
 HRESULT(*ResizeOriginal)(IDXGISwapChain* swapChain, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT newFormat, UINT swapChainFlags) = nullptr;
 WNDPROC oWndProc;
+ImFont* m_pFont;
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 static bool ShowMenu = true;
@@ -56,7 +116,6 @@ void ToggleButton(const char* str_id, bool* v)
 	draw_list->AddCircleFilled(ImVec2(p.x + radius + t * (width - radius * 2.0f), p.y + radius), radius + 0.80f, IM_COL32(255, 255, 255, 255));
 }
 
-
 VOID AddMarker(ImGuiWindow& window, float width, float height, float* start, PVOID pawn, LPCSTR text, ImU32 color) {
 	auto root = Util::GetPawnRootLocation(pawn);
 	if (root) {
@@ -66,13 +125,16 @@ VOID AddMarker(ImGuiWindow& window, float width, float height, float* start, PVO
 		float dz = start[2] - pos.Z;
 
 		if (Util::WorldToScreen(width, height, &pos.X)) {
-			float dist = Util::SpoofCall(sqrtf, dx * dx + dy * dy + dz * dz) / 1000.0f;
+			float dist = Util::SpoofCall(sqrtf, dx * dx + dy * dy + dz * dz) / 100.0f;
 
-			CHAR modified[0xFF] = { 0 };
-			snprintf(modified, sizeof(modified), ("%s\n| %dm |"), text, static_cast<INT>(dist));
+			if (dist < 250)
+			{
+				CHAR modified[0xFF] = { 0 };
+				snprintf(modified, sizeof(modified), ("%s [%dm]"), text, static_cast<INT>(dist));
 
-			auto size = ImGui::GetFont()->CalcTextSizeA(window.DrawList->_Data->FontSize, FLT_MAX, 0, modified);
-			window.DrawList->AddText(ImVec2(pos.X - size.x / 2.0f, pos.Y - size.y / 2.0f), color, modified);
+				auto size = ImGui::GetFont()->CalcTextSizeA(window.DrawList->_Data->FontSize, FLT_MAX, 0, modified);
+				window.DrawList->AddText(ImVec2(pos.X - size.x / 2.0f, pos.Y - size.y / 2.0f), ImGui::GetColorU32(color), modified);
+			}
 		}
 	}
 }
@@ -91,14 +153,12 @@ FLOAT GetDistance(ImGuiWindow& window, float width, float height, float* start, 
 			return dist;
 		}
 	}
-
 }
 
 __declspec(dllexport) LRESULT CALLBACK WndProcHook(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	if (msg == WM_KEYUP && (wParam == config_system.keybind.Menu || (ShowMenu && wParam == VK_ESCAPE))) {
+	if (msg == WM_KEYUP && (wParam == VK_F8 || (ShowMenu && wParam == VK_ESCAPE))) {
 		ShowMenu = !ShowMenu;
 		ImGui::GetIO().MouseDrawCursor = ShowMenu;
-
 	}
 	else if (msg == WM_QUIT && ShowMenu) {
 		ExitProcess(0);
@@ -119,6 +179,32 @@ const ImVec4 red = { 0.65,0,0,1 };
 const ImVec4 white = { 255.0,255.0,255.0,1 };
 const ImVec4 green = { 0.03,0.81,0.14,1 };
 const ImVec4 blue = { 0.21960784313,0.56470588235,0.90980392156,1.0 };
+
+auto BoxColor = ImGui::GetColorU32({ config_system.item.BoxNotVisibleColor[0], config_system.item.BoxNotVisibleColor[1], config_system.item.BoxNotVisibleColor[2], config_system.item.BoxNotVisibleColor[3] }); //box color when not visible
+void DrawCorneredBox(int X, int Y, int W, int H, const ImU32& color, int thickness) {
+	float lineW = (W / 3);
+	float lineH = (H / 3);
+
+	//black outlines
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y), ImVec2(X, Y + lineH), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y), ImVec2(X + lineW, Y), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W - lineW, Y), ImVec2(X + W, Y), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W, Y), ImVec2(X + W, Y + lineH), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y + H - lineH), ImVec2(X, Y + H), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y + H), ImVec2(X + lineW, Y + H), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W - lineW, Y + H), ImVec2(X + W, Y + H), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W, Y + H - lineH), ImVec2(X + W, Y + H), ImGui::ColorConvertFloat4ToU32(ImVec4(1 / 255.0, 1 / 255.0, 1 / 255.0, 255 / 255.0)), 3);
+
+	//corners
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y), ImVec2(X, Y + lineH), ImGui::GetColorU32(color), thickness);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y), ImVec2(X + lineW, Y), ImGui::GetColorU32(color), thickness);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W - lineW, Y), ImVec2(X + W, Y), ImGui::GetColorU32(color), thickness);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W, Y), ImVec2(X + W, Y + lineH), ImGui::GetColorU32(color), thickness);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y + H - lineH), ImVec2(X, Y + H), ImGui::GetColorU32(color), thickness);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X, Y + H), ImVec2(X + lineW, Y + H), ImGui::GetColorU32(color), thickness);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W - lineW, Y + H), ImVec2(X + W, Y + H), ImGui::GetColorU32(color), thickness);
+	ImGui::GetOverlayDrawList()->AddLine(ImVec2(X + W, Y + H - lineH), ImVec2(X + W, Y + H), ImGui::GetColorU32(color), thickness);
+}
 
 ImGuiWindow& BeginScene() {
 	ImGui_ImplDX11_NewFrame();
@@ -143,162 +229,137 @@ VOID EndScene(ImGuiWindow& window) {
 	ImGui::PopStyleVar(2);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.17f, 0.18f, 0.2f, 1.0f));
 
+	const ImVec4 Purple = { 0.80f, 0.00f, 0.80f, 1.00f };
+	const ImVec4 LY = { 1.00f, 1.00f, 0.80f, 1.00f };
+	const ImVec4 LB = { 0.80f, 1.00f, 1.00f, 1.00f };
+	const ImVec4 cyan = { 0.00f, 0.93f, 1.00f, 1.00f };
+	const ImVec4 clear = { 1.00f, 1.00f, 1.00f, 0.00f };
+	const ImVec4 orange = { 0.51f, 0.36f, 0.15f, 1.00f };
+	const ImVec4 pink = { 0.79f, 0.19f, 0.65f, 1.00f };
+	const ImVec4 color = { 255.0,255.0,255.0,1 };
+	const ImVec4 red = { 0.65,0,0,1 };
+	const ImVec4 red1 = { 0.65,0,0,0.5 };
+	const ImVec4 white = { 255.0,255.0,255.0,1 };
+	const ImVec4 green = { 0.03,0.81,0.14,1 };
+	const ImVec4 blue = { 0.21960784313,0.56470588235,0.90980392156,1.0 };
+	static bool VarsMenuOpened = true;
+
 	if (ShowMenu) {
+		ImGuiStyle* Style = &ImGui::GetStyle();
+		Style->ItemSpacing = ImVec2(4, 3);
+		Style->WindowRounding = 1.0f;
+		Style->FrameBorderSize = 1;
+		Style->Colors[ImGuiCol_WindowBg] = ImColor(0.00f, 0.00f, 0.00f, 0.00f); // 0, 0, 0, 0
+		Style->Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.83f, 1.00f);
+		Style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
+		Style->Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+		Style->Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+		Style->Colors[ImGuiCol_PopupBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
+		Style->Colors[ImGuiCol_Border] = ImVec4(0.80f, 0.80f, 0.83f, 0.88f);
+		Style->Colors[ImGuiCol_BorderShadow] = ImVec4(0.92f, 0.91f, 0.88f, 0.00f);
+		Style->Colors[ImGuiCol_FrameBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		Style->Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
+		Style->Colors[ImGuiCol_FrameBgActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		Style->Colors[ImGuiCol_TitleBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		Style->Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(1.00f, 0.98f, 0.95f, 0.75f);
+		Style->Colors[ImGuiCol_TitleBgActive] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
+		Style->Colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		Style->Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		Style->Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
+		Style->Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		Style->Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		Style->Colors[ImGuiCol_CheckMark] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
+		Style->Colors[ImGuiCol_SliderGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
+		Style->Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		Style->Colors[ImGuiCol_Button] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		Style->Colors[ImGuiCol_ButtonHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
+		Style->Colors[ImGuiCol_ButtonActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		Style->Colors[ImGuiCol_Header] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+		Style->Colors[ImGuiCol_HeaderHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		Style->Colors[ImGuiCol_HeaderActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		Style->Colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		Style->Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
+		Style->Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
+		Style->Colors[ImGuiCol_PlotLines] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
+		Style->Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
+		Style->Colors[ImGuiCol_PlotHistogram] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
+		Style->Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
+		Style->Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.25f, 1.00f, 0.00f, 0.43f);
+		Style->Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
 
-		ImVec4* colors = ImGui::GetStyle().Colors;
-		colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-		colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 1.0f);
-		colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
-		colors[ImGuiCol_Border] = ImVec4(1.00f, 0.00f, 0.00f, 0.50f);
-		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_FrameBg] = ImVec4(0.41f, 0.00f, 0.03f, 0.54f);
-		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.48f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-		colors[ImGuiCol_TitleBg] = ImVec4(0.04f, 0.04f, 0.04f, 1.00f);
-		colors[ImGuiCol_TitleBgActive] = ImVec4(0.04f, 0.04f, 0.04f, 1.00f);
-		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-		colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_CheckMark] = ImVec4(0.75f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_SliderGrab] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_Button] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_ButtonHovered] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_ButtonActive] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_Header] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_HeaderActive] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_Separator] = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
-		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
-		colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
-		colors[ImGuiCol_ResizeGrip] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_ResizeGripHovered] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.46f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
-		colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
-		colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
-		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+		static int iTab;
 
-		ImGui::GetStyle().WindowTitleAlign = ImVec2(0.5, 0.5);
-		ImGui::GetStyle().FramePadding = ImVec2(4.0, 2.0);
-		ImGui::GetStyle().WindowRounding = 0;
-		ImGui::GetStyle().GrabMinSize = 12;
-		ImGui::GetStyle().ScrollbarSize = 14;
-		ImGui::GetStyle().ScrollbarRounding = 0;
-		ImGui::GetStyle().FrameRounding = 4.0f;
-
-
-			ImGui::Begin("LoveFN Made by Inverse | ur mom is gay <3", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize); {
-			ImGui::SetWindowSize(ImVec2(550, 450), ImGuiCond_FirstUseEver);
-
-			ImVec2 size = ImGui::GetItemRectSize();
-
-			if (ImGui::CollapsingHeader("Aimbot"))
+		ImGui::Begin("Covid-69 [BETA-RELEASE]", 0, ImVec2(600, 350), 1.f, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar); {
+			ImGui::Text("Covid-69 [BETA-RELEASE]");
+			ImGui::Text("Made by YTMcGamer#1337 and Kenny's Cheetos#6969");
 			{
-				ImGui::Text("Memory Aimbot [ not working ]");
-				ToggleButton("Memory", &config_system.item.Aimbot);
-				if (config_system.item.Aimbot)
+				ImGui::Columns(2, nullptr, false);
+				Style->ItemSpacing = ImVec2(0.f, 0.f);
+				ImGui::SetColumnOffset(1, 230);
+				ImGui::BeginChild("##tabs", ImVec2(600, 250), false);
 				{
-					ImGui::Text("Silent Aimbot");
-					ToggleButton("Silent", &config_system.item.SilentAimbot);
-					ImGui::Text("Trigger Aimbot");
-					ToggleButton("Trigger", &config_system.item.TriggerAimbot);
-					ImGui::Text("No Spread");
-					ToggleButton("Spread", &config_system.item.NoSpreadAimbot);
+					if (ImGui::Button("Aimbot", ImVec2(200, 45))) iTab = 0;
+					if (ImGui::Button("Visuals", ImVec2(200, 45))) iTab = 1;
+					if (ImGui::Button("Exploits", ImVec2(200, 45))) iTab = 2;
+					ImGui::Text("");
+					ImGui::Text("");
+					ImGui::Text("");
+					ImGui::Text("");
+					ImGui::Text("");
+					ImGui::Text("");
+					ImGui::Text("Press F8 to open the Menu :)");
 				}
-				const char* Points[] = { " Head", " Chest", " Pelvis" };
-				static int AimPoint = 0;
-				ImGui::Combo("Aim Point", &AimPoint, Points, IM_ARRAYSIZE(Points));
-				config_system.item.AimPoint = AimPoint;
-				if (config_system.item.AutoAimbot) {
-					config_system.item.AutoAimbot = 2000.0f;
+
+				ImGui::EndChild();
+				ImGui::NextColumn();
+				if (iTab == 0) {
+					ImGui::TextColored(ImColor(pink), "Aimbot");
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "memory Aimbot"); ImGui::SameLine(); ImGui::Checkbox(("memory aimbot##checkbox"), &config_system.item.Aimbot);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "silent Aimbot"); ImGui::SameLine(); ImGui::Checkbox(("silent aimbot##checkbox"), &config_system.item.SilentAimbot);
+					ImGui::TextColored(ImColor(pink), "Sliders");
+					ImGui::Text(" ");
+					ImGui::SliderFloat(("FOV Circle"), &config_system.item.AimbotFOV, 5.0f, 1000.0f, ("%.2f"));
+					ImGui::Text(" ");
+					ImGui::SliderFloat(("FOV Slider"), &config_system.item.FOV, 5.0f, 180.0f, ("%.2f"));
+					ImGui::Text(" ");
+					ImGui::SliderFloat(("Aim smooth"), &config_system.item.AimbotSlow, 5.0f, 30.0f, ("%.2f"));
 				}
-				ImGui::Text("Fov");
-				ToggleButton("Fov", &config_system.item.DrawAimbotFOV);
-				if (config_system.item.DrawAimbotFOV)
-				{
-					ImGui::Text("Filled FOV");
-					ToggleButton("Filled", &config_system.item.DrawFilledAimbotFOV);
+				if (iTab == 1) {
+					ImGui::TextColored(ImColor(pink), "ESP");
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "Player names TEST");  ImGui::SameLine();  ImGui::Checkbox(("player name##checkbox"), &config_system.item.PlayerNames);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "Player box");  ImGui::SameLine();  ImGui::Checkbox(("player box##checkbox"), &config_system.item.PlayerBox);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "Vehicle ESP");  ImGui::SameLine();  ImGui::Checkbox(("Vehicle ESP##checkbox"), &config_system.item.Vehicle);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "Player Cornor TEST");  ImGui::SameLine();  ImGui::Checkbox(("player corner##checkbox"), &config_system.item.PlayersCorner);
+					ImGui::Text(" ");
 				}
-				ImGui::SliderFloat(("Circle FOV"), &config_system.item.AimbotFOV, 100.0f, 1000.0f);
-			}
-
-			if (ImGui::CollapsingHeader("Misc"))
-			{
-				ImGui::Text("Sniper Bullet TP [ not working ]");
-				ToggleButton("Sniper", &config_system.item.BulletTP);
-
-				ImGui::Text("Instant Reload [ not working ]");
-				ToggleButton("Instant", &config_system.item.InstantReload);
-
-				ImGui::Text("Spin Bot [CAPSLOCK]");
-				ToggleButton("Spin", &config_system.item.SpinBot);
-
-				ImGui::Text("Check Visible");
-				ToggleButton("Visible", &config_system.item.CheckVisible);
-
-				ImGui::Text("Camera FOV");
-				ToggleButton("Camera", &config_system.item.FOVSlider);
-
-				if (config_system.item.FOVSlider)
-				{
-					ImGui::SliderFloat(("Camera FOV Slider"), &config_system.item.FOV, 0.0f, 150.0f, ("%.2f"));
+				if (iTab == 2) {
+					ImGui::TextColored(ImColor(pink), "Exploits");
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "spinbot");  ImGui::SameLine();  ImGui::Checkbox(("spinbot##checkbox"), &config_system.item.SpinBot);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "debug2");  ImGui::SameLine();  ImGui::Checkbox(("debug2##checkbox"), &config_system.item.debug2);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "Info TEST");  ImGui::SameLine();  ImGui::Checkbox(("debug2##checkbox"), &config_system.item.Info);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(cyan), "projectile teleport");  ImGui::SameLine();  ImGui::Checkbox(("projectile teleport##checkbox"), &config_system.item.BulletTP);
+					ImGui::Text(" ");
+					ImGui::TextColored(ImColor(red), "WARNING ITEMS HERE CAN GET YOU BANNED RATHER QUICK!");
 				}
-				ImGui::Text("Stream Snipe Player Name");
-				ImGui::InputText("       ", streamsnipena, 256, ImGuiInputTextFlags_EnterReturnsTrue);
-			}
-
-			if (ImGui::CollapsingHeader("ESP"))
-			{
-				ImGui::Text("Chest ESP");
-				ToggleButton("Chest", &config_system.item.Chest);
-				ImGui::Text("Llama ESP");
-				ToggleButton("Llama", &config_system.item.Llama);
-				ImGui::Text("Ammo ESP");
-				ToggleButton("Ammo", &config_system.item.Ammo);
-				ImGui::Text("Boat ESP");
-				ToggleButton("Boat", &config_system.item.boat);
-				ImGui::Text("Chopper ESP");
-				ToggleButton("Chopper", &config_system.item.chopper);
-			}
-
-			if (ImGui::CollapsingHeader("Colors"))
-			{
-				ImGui::PushItemWidth(100.0f);
-				ImGui::Text("ESP");
-				ImGui::SameLine();
-				ImGui::ColorPicker3(("Box"), config_system.item.BoxESP, ImGuiColorEditFlags_NoInputs);
-				ImGui::SameLine();
-				ImGui::ColorPicker3(("Lines"), config_system.item.LineESP, ImGuiColorEditFlags_NoInputs);
-				ImGui::SameLine();
-				ImGui::ColorPicker3(("Aim\nFOV"), config_system.item.FOVCircleColor, ImGuiColorEditFlags_NoInputs);
-				ImGui::Text("Skeleton ESP");
-				ImGui::ColorPicker3(("Is\nVisible"), config_system.item.PlayerVisibleColor, ImGuiColorEditFlags_NoInputs);
-				ImGui::SameLine();
-				ImGui::ColorPicker3(("Not\nVisible"), config_system.item.PlayerNotVisibleColor, ImGuiColorEditFlags_NoInputs);
-				ImGui::SameLine();
-				ImGui::ColorPicker3(("Teammates"), config_system.item.PlayerTeammate, ImGuiColorEditFlags_NoInputs);
-				ImGui::PopItemWidth();
-				ImGui::SliderFloat(("Box Opacity"), &config_system.item.BoxESPOpacity, 0.0f, 1.0f, ("%.2f"));
-				ImGui::SliderFloat(("FOV Circle Opacity"), &config_system.item.FOVCircleOpacity, 0.0f, 1.0f, ("%.2f"));
-				ImGui::SliderFloat(("FOV Circle Filled Opacity"), &config_system.item.FOVCircleFilledOpacity, 0.0f, 1.0f, ("%.2f"));
+				ImGui::End();
 			}
 		}
-		ImGui::End();
 	}
 
 	ImGui::PopStyleColor();
 
 	ImGui::Render();
 }
-
 VOID AddLine(ImGuiWindow& window, float width, float height, float a[3], float b[3], ImU32 color, float& minX, float& maxX, float& minY, float& maxY) {
 	float ac[3] = { a[0], a[1], a[2] };
 	float bc[3] = { b[0], b[1], b[2] };
@@ -319,11 +380,12 @@ VOID AddLine(ImGuiWindow& window, float width, float height, float a[3], float b
 	}
 }
 
-
 __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags) {
 	static float width = 0;
 	static float height = 0;
 	static HWND hWnd = 0;
+	using f_present = HRESULT(__stdcall*)(IDXGISwapChain* pthis, UINT sync_interval, UINT flags);
+	f_present o_present = nullptr;
 	if (!device) {
 		swapChain->GetDevice(__uuidof(device), reinterpret_cast<PVOID*>(&device));
 		device->GetImmediateContext(&immediateContext);
@@ -392,15 +454,14 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 		auto localPlayerTeamIndex = ReadDWORD(localPlayerState, Offsets::FortniteGame::FortPlayerStateAthena::TeamIndex);
 
 		auto weaponName = Util::GetObjectFirstName((UObject*)localPlayerWeapon);
-		auto isProjectileWeapon = wcsstr(weaponName.c_str(), L"Rifle_Sniper");
+		auto isProjectileWeapon = wcsstr(weaponName.c_str(), L"");
 
 		Core::LocalPlayerPawn = localPlayerPawn;
 		Core::LocalPlayerController = localPlayerController;
 
-
 		std::vector<PVOID> playerPawns;
 		for (auto li = 0UL; li < ReadDWORD(world, Offsets::Engine::World::Levels + sizeof(PVOID)); ++li) {
-			auto levels = ReadPointer(world, 0x148);//Levels
+			auto levels = ReadPointer(world, Offsets::Engine::World::Levels);
 			if (!levels) break;
 
 			auto level = ReadPointer(levels, li * sizeof(PVOID));
@@ -417,7 +478,29 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 				if (wcsstr(name.c_str(), L"PlayerPawn_Athena_C") || wcsstr(name.c_str(), L"PlayerPawn_Athena_Phoebe_C") || wcsstr(name.c_str(), L"BP_MangPlayerPawn") || wcsstr(name.c_str(), L"HoagieVehicle_C")) {
 					playerPawns.push_back(pawn);
 				}
-				
+
+				else if (config_system.item.Vehicle)
+				{
+					if (wcsstr(name.c_str(), (L"MeatballVehicle_L")) || wcsstr(name.c_str(), (L"JackalVehicle_Athena_C")) || wcsstr(name.c_str(), (L"FerretVehicle_C")) || wcsstr(name.c_str(), (L"AntelopeVehicle_C")) || wcsstr(name.c_str(), (L"GolfCartVehicleSK_C")) || wcsstr(name.c_str(), (L"TestMechVehicle_C")) || wcsstr(name.c_str(), (L"OctopusVehicle_C")) || wcsstr(name.c_str(), (L"ShoppingCartVehicleSK_C")) || wcsstr(name.c_str(), (L"HoagieVehicle_C")))
+					{
+						auto VehicleRoot = Util::GetPawnRootLocation(pawn);
+						if (VehicleRoot) {
+							auto VehiclePos = *VehicleRoot;
+							float dx = localPlayerLocation[0] - VehiclePos.X;
+							float dy = localPlayerLocation[1] - VehiclePos.Y;
+							float dz = localPlayerLocation[2] - VehiclePos.Z;
+
+							if (Util::WorldToScreen(width, height, &VehiclePos.X)) {
+								float dist = Util::SpoofCall(sqrtf, dx * dx + dy * dy + dz * dz) / 100.0f;
+
+								if (dist < 1500)
+								{
+									AddMarker(window, width, height, localPlayerLocation, pawn, "Vehicle", ImGui::GetColorU32({ 0, 65, 200, 255 }));
+								}
+							}
+						}
+					}
+				}
 				else if (config_system.item.Llama && wcsstr(name.c_str(), L"AthenaSupplyDrop_Llama")) {
 					AddMarker(window, width, height, localPlayerLocation, pawn, "Llama", ImGui::GetColorU32({ 0.03f, 0.78f, 0.91f, 1.0f }));
 				}
@@ -428,16 +511,10 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 					AddMarker(window, width, height, localPlayerLocation, pawn, "Ammo Box", ImGui::GetColorU32({ 0.75f, 0.75f, 0.75f, 1.0f }));
 				}
 				else if (config_system.item.chopper && wcsstr(name.c_str(), L"HoagieVehicle_C")) {
-
 					AddMarker(window, width, height, localPlayerLocation, pawn, "Chopper", ImGui::GetColorU32({ 1.0f, 0.0f, 0.0f, 1.0f }));
 				}
 				else if (config_system.item.boat && wcsstr(name.c_str(), L"MeatballVehicle_L")) {
-
 					AddMarker(window, width, height, localPlayerLocation, pawn, "Boat", ImGui::GetColorU32({ 1.0f, 0.0f, 0.0f, 1.0f }));
-				}
-				else if (config_system.item.boat && wcsstr(name.c_str(), L"")) {
-
-					AddMarker(window, width, height, localPlayerLocation, pawn, "THIS IS PASTED LMAFO FIX UR SELF", ImGui::GetColorU32({ 1.0f, 0.0f, 0.0f, 1.0f }));
 				}
 			}
 		}
@@ -469,7 +546,6 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 			AimPointer = BONE_LEFTTHIGH_ID;
 		}
 		else if (config_system.item.AimPoint == 8) { // automatic
-
 		}
 
 		for (auto pawn : playerPawns)
@@ -486,9 +562,19 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 			float compMatrix[4][4] = { 0 };
 			Util::ToMatrixWithScale(reinterpret_cast<float*>(reinterpret_cast<PBYTE>(mesh) + 0x1C0), compMatrix);
 
+			// root
+			float root[3] = { 0 };
+			Util::GetBoneLocation(compMatrix, bones, 0, root);
+
 			// Top
 			float head[3] = { 0 };
-			Util::GetBoneLocation(compMatrix, bones, 66, head);
+			Util::GetBoneLocation(compMatrix, bones, BONE_HEAD_ID, head);
+
+			float head2[3] = { 0 };
+			Util::GetBoneLocation(compMatrix, bones, BONE_HEAD_ID, head2);
+
+			float body[3] = { 0 };
+			Util::GetBoneLocation(compMatrix, bones, 5, body);
 
 			float neck[3] = { 0 };
 			Util::GetBoneLocation(compMatrix, bones, 65, neck);
@@ -549,14 +635,11 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 			float rightFeetFinger[3] = { 0 };
 			Util::GetBoneLocation(compMatrix, bones, 79, rightFeetFinger);
 
-			Util::GetBoneLocation(compMatrix, bones, AimPointer, CurrentAimPointer);
-
 			auto color = ImGui::GetColorU32({ config_system.item.PlayerNotVisibleColor[0], config_system.item.PlayerNotVisibleColor[1], config_system.item.PlayerNotVisibleColor[2], 1.0f });
 			FVector viewPoint = { 0 };
 
-
-			if (ReadDWORD(state, 0xE60) == localPlayerTeamIndex) {
-				color = ImGui::GetColorU32({ config_system.item.PlayerTeammate[0], config_system.item.PlayerTeammate[1], config_system.item.PlayerTeammate[2], 1.0f });
+			if (ReadDWORD(state, 0xE88) == localPlayerTeamIndex) {
+				color = ImGui::GetColorU32({ 0.0f, 1.0f, 0.0f, 1.0f });
 			}
 			else if (!config_system.item.CheckVisible) {
 				auto w2s = *reinterpret_cast<FVector*>(CurrentAimPointer);
@@ -627,7 +710,6 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 							closestPawn = pawn;
 						}
 					}
-
 				}
 				else
 				{
@@ -644,14 +726,17 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 				}
 			}
 
-
-
 			//if (!config_system.item.Players) continue;
+
+			if (config_system.item.CrosshairSize) {
+				window.DrawList->AddLine(ImVec2(width / 2 - 15, height / 2), ImVec2(width / 2 + 15, height / 2), ImGui::GetColorU32(white), 2);
+				window.DrawList->AddLine(ImVec2(width / 2, height / 2 - 15), ImVec2(width / 2, height / 2 + 15), ImGui::GetColorU32(white), 2);
+			}
 
 			if (config_system.item.PlayerLines) {
 				auto end = *reinterpret_cast<FVector*>(CurrentAimPointer);
 				if (Util::WorldToScreen(width, height, &end.X)) {
-					if (ReadDWORD(state, 0xE60) != localPlayerTeamIndex) {
+					if (ReadDWORD(state, 0xE88) != localPlayerTeamIndex) {
 						if (config_system.item.LineESP) {
 							window.DrawList->AddLine(ImVec2(width / 2, height / 2), ImVec2(end.X, end.Y), ImGui::GetColorU32({ config_system.item.LineESP[0], config_system.item.LineESP[1], config_system.item.LineESP[2], 1.0f }));
 						}
@@ -663,6 +748,13 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 			float maxX = -FLT_MAX;
 			float minY = FLT_MAX;
 			float maxY = -FLT_MAX;
+
+			if (config_system.item.PlayerBox) {
+				auto Spikey1 = ImVec2(maxX + 4.0f, maxY + 4.0f);
+				auto Spikey2 = ImVec2(minX - 4.0f, minY - 4.0f);;
+
+				window.DrawList->AddRect(Spikey1, Spikey2, ImGui::GetColorU32({ white }), 0.5, 15, 1.5f);
+			}
 
 			if (config_system.item.Players) {
 				AddLine(window, width, height, head, neck, color, minX, maxX, minY, maxY);
@@ -683,56 +775,84 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 				AddLine(window, width, height, rightFoot, rightFeet, color, minX, maxX, minY, maxY);
 				AddLine(window, width, height, leftFeet, leftFeetFinger, color, minX, maxX, minY, maxY);
 				AddLine(window, width, height, rightFeet, rightFeetFinger, color, minX, maxX, minY, maxY);
-				
 			}
 
-			/*float dist;
-			if (dist >= 100)
-				dist = 75;*/
-
 			if (minX < width && maxX > 0 && minY < height && maxY > 0) {
-
 				//ALL CORRECT
 				auto topLeft = ImVec2(minX - 3.0f, minY - 3.0f);
 				auto bottomRight = ImVec2(maxX + 3.0f, maxY);
 				auto topRight = ImVec2(maxX + 3.0f, minY - 3.0f);
 				auto bottomLeft = ImVec2(minX - 3.0f, maxY);
 
+				/*float dist;
+				if (dist >= 100)
+				dist = 75;*/
 
-				if (config_system.item.PlayerBox) {
+				auto root = Util::GetPawnRootLocation(pawn);
+				float dx;
+				float dy;
+				float dz;
+				float dist;
+				if (root) {
+					auto pos = *root;
+					dx = localPlayerLocation[0] - pos.X;
+					dy = localPlayerLocation[1] - pos.Y;
+					dz = localPlayerLocation[2] - pos.Z;
 
-					window.DrawList->AddRectFilled(topLeft, bottomRight, ImGui::GetColorU32({ 0.0f, 0.0f, 0.0f, 0.70f }));
-					window.DrawList->AddRect(topLeft, bottomRight, color, 0.2, 0, 0.1f);
+					if (Util::WorldToScreen(width, height, &pos.X)) {
+						dist = Util::SpoofCall(sqrtf, dx * dx + dy * dy + dz * dz) / 1500.0f;
+					}
 				}
-				
+
+				if (dist >= 100)
+					dist = 75;
 				else if (config_system.item.PlayersCorner) {
-					auto bottomRightLEFT = ImVec2(maxX - 7.f + 75, maxY + 2.5f);
-					auto bottomRightUP = ImVec2(maxX + 3.0f, maxY - 7.f + 75);
+					auto topLeft = ImVec2(minX - 3.0f, minY - 3.0f);
+					auto bottomRight = ImVec2(maxX + 3.0f, maxY + 3.0f);
+					float lineW = (width / 5);
+					float lineH = (height / 6);
+					float lineT = 1;
+
+					auto w2sa = *reinterpret_cast<FVector*>(head);
+					Util::WorldToScreen(width, height, &w2sa.X);
+					Util::WorldToScreen(width, height, &w2sa.Y);
+					auto X = w2sa.X;
+					auto Y = w2sa.Y;
+
+					auto bottomRightLEFT = ImVec2(maxX - config_system.item.CornerSize + dist, maxY + 2.5f);
+					auto bottomRightUP = ImVec2(maxX + 3.0f, maxY - config_system.item.CornerSize + dist);
 					auto topRight = ImVec2(maxX + 3.0f, minY - 3.0f);
-					auto topRightLEFT = ImVec2(maxX - 7.f + 75, minY - 3.0f);
-					auto topRightDOWN = ImVec2(maxX + 3.0f, minY + 7.f - 75);
+					auto topRightLEFT = ImVec2(maxX - config_system.item.CornerSize + dist, minY - 3.0f);
+					auto topRightDOWN = ImVec2(maxX + 3.0f, minY + config_system.item.CornerSize - dist);
 
 					auto bottomLeft = ImVec2(minX - 3.0f, maxY + 3.f);
-					auto bottomLeftRIGHT = ImVec2(minX + 7.f - 75, maxY + 3.f);
-					auto bottomLeftUP = ImVec2(minX - 3.0f, maxY - 7.f + 75);
-					auto topLeftRIGHT = ImVec2(minX + 7.f - 75, minY - 3.0f);
-					auto topLeftDOWN = ImVec2(minX - 3.0f, minY + 7.f - 75);
+					auto bottomLeftRIGHT = ImVec2(minX + config_system.item.CornerSize - dist, maxY + 3.f);
+					auto bottomLeftUP = ImVec2(minX - 3.0f, maxY - config_system.item.CornerSize + dist);
+					auto topLeftRIGHT = ImVec2(minX + config_system.item.CornerSize - dist, minY - 3.0f);
+					auto topLeftDOWN = ImVec2(minX - 3.0f, minY + config_system.item.CornerSize - dist);
 
-
-					window.DrawList->AddRectFilled(topLeft, bottomRight, ImGui::GetColorU32({ 0.0f, 0.0f, 0.0f, 0.70f }));
 					ImU32 kek = ImGui::GetColorU32({ ImGui::GetColorU32({ 1.f, 0.f, 0.f, 1.0f }) });
-					window.DrawList->AddLine(topLeft, topLeftRIGHT, color, 1.00f);
-					window.DrawList->AddLine(topLeft, topLeftDOWN, color, 1.00f);
+					window.DrawList->AddLine(topLeftRIGHT, topLeft, ImGui::GetColorU32({ white }), 1.00f);
+					window.DrawList->AddLine(topLeftDOWN, topLeft, ImGui::GetColorU32({ white }), 1.00f);
 
-					window.DrawList->AddLine(bottomRight, bottomRightLEFT, color, 1.5f);
-					window.DrawList->AddLine(bottomRight, bottomRightUP, color, 1.5f);
+					window.DrawList->AddLine(bottomRightLEFT, bottomRight, ImGui::GetColorU32({ white }), 1.5f);
+					window.DrawList->AddLine(bottomRightUP, bottomRight, ImGui::GetColorU32({ white }), 1.5f);
 
-					window.DrawList->AddLine(topRight, topRightLEFT, color, 1.5f);
-					window.DrawList->AddLine(topRight, topRightDOWN, color, 1.5f);
+					window.DrawList->AddLine(topRightLEFT, topRight, ImGui::GetColorU32({ white }), 1.5f);
+					window.DrawList->AddLine(topRightDOWN, topRight, ImGui::GetColorU32({ white }), 1.5f);
 
-					window.DrawList->AddLine(bottomLeft, bottomLeftRIGHT, color, 1.5f);
-					window.DrawList->AddLine(bottomLeft, bottomLeftUP, color, 1.5f);
+					window.DrawList->AddLine(bottomLeftRIGHT, bottomLeft, ImGui::GetColorU32({ white }), 1.5f);
+					window.DrawList->AddLine(bottomLeftUP, bottomLeft, ImGui::GetColorU32({ white }), 1.5f);
 				}
+
+				if (!config_system.item.AutoAimbot && config_system.item.AimbotFOV) {
+					window.DrawList->AddCircle(ImVec2(width / 2, height / 2), config_system.item.AimbotFOV, ImGui::GetColorU32({ white }), 128);
+				}
+
+				/*float dist;
+				if (dist >= 100)
+					dist = 75;*/
+
 				if (config_system.item.PlayerNames) {
 					FString playerName;
 					Core::ProcessEvent(state, Offsets::Engine::PlayerState::GetPlayerName, &playerName, 0);
@@ -784,8 +904,6 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 			Core::NoSpread = FALSE;
 		}
 
-		bool isSilent = config_system.item.SilentAimbot;
-		bool isRage = config_system.item.AutoAimbot;
 		if (config_system.item.SpinBot && Util::SpoofCall(GetAsyncKeyState, config_system.keybind.Spinbot) && Util::SpoofCall(GetForegroundWindow) == hWnd) {
 			int rnd = rand();
 			FRotator args = { 0 };
@@ -801,19 +919,6 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 			config_system.item.SilentAimbot = true;
 		}
 		else {
-			if (!isSilent) {
-				config_system.item.SilentAimbot = false;
-			}
-			if (!isRage) {
-				config_system.item.AutoAimbot = false;
-			}
-
-			if (config_system.item.SilentAimbot) {
-				isSilent = true;
-			}
-			if (config_system.item.AutoAimbot) {
-				isRage = true;
-			}
 		}
 
 		if (config_system.item.FlickAimbot && closestPawn && Util::SpoofCall(GetAsyncKeyState, config_system.keybind.AimbotShoot) < 0 && Util::SpoofCall(GetForegroundWindow) == hWnd) {
@@ -836,23 +941,6 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 			Core::NoSpread = FALSE;
 		}
 
-		if (config_system.item.DrawAimbotFOV) {
-			window.DrawList->AddCircle(ImVec2(width / 2, height / 2), config_system.item.AimbotFOV, ImGui::GetColorU32({ config_system.item.FOVCircleColor[0], config_system.item.FOVCircleColor[1], config_system.item.FOVCircleColor[2], config_system.item.FOVCircleOpacity }), 128);
-			if (config_system.item.DrawFilledAimbotFOV) {
-				window.DrawList->AddCircleFilled(ImVec2(width / 2, height / 2), config_system.item.AimbotFOV, ImGui::GetColorU32({ 0.0f, 0.0f, 0.0f, config_system.item.FOVCircleFilledOpacity }), 128);
-			}
-		}
-
-		if (&config_system.item.CrosshairSize) {
-			//base crosshair
-			window.DrawList->AddLine(ImVec2(width / 2 + config_system.item.CrosshairSize, height / 2), ImVec2(width / 2 - config_system.item.CrosshairSize, height / 2), ImGui::GetColorU32({ config_system.item.FOVCircleColor[0], config_system.item.FOVCircleColor[1], config_system.item.FOVCircleColor[2], 1.0f }), config_system.item.CrosshairThickness);
-			window.DrawList->AddLine(ImVec2(width / 2, height / 2 + config_system.item.CrosshairSize), ImVec2(width / 2, height / 2 - config_system.item.CrosshairSize), ImGui::GetColorU32({ config_system.item.FOVCircleColor[0], config_system.item.FOVCircleColor[1], config_system.item.FOVCircleColor[2], 1.0f }), config_system.item.CrosshairThickness);
-
-			//fancy crosshair
-			window.DrawList->AddLine(ImVec2(width / 2 + config_system.item.CrosshairSize / 2, height / 2), ImVec2(width / 2 - config_system.item.CrosshairSize / 2, height / 2), ImGui::GetColorU32({ 1.0f, 0.0f, 0.0f, 1.0f }), config_system.item.CrosshairThickness);
-			window.DrawList->AddLine(ImVec2(width / 2, height / 2 + config_system.item.CrosshairSize / 2), ImVec2(width / 2, height / 2 - config_system.item.CrosshairSize / 2), ImGui::GetColorU32({ 1.0f, 0.0f, 1.0f, 0.0f }), config_system.item.CrosshairThickness);
-		}
-
 		success = TRUE;
 	} while (FALSE);
 
@@ -863,8 +951,6 @@ __declspec(dllexport) HRESULT PresentHook(IDXGISwapChain* swapChain, UINT syncIn
 	return PresentOriginal(swapChain, syncInterval, flags);
 }
 
-
-
 __declspec(dllexport) HRESULT ResizeHook(IDXGISwapChain* swapChain, UINT bufferCount, UINT width, UINT height, DXGI_FORMAT newFormat, UINT swapChainFlags) {
 	ImGui_ImplDX11_Shutdown();
 	renderTargetView->Release();
@@ -874,7 +960,6 @@ __declspec(dllexport) HRESULT ResizeHook(IDXGISwapChain* swapChain, UINT bufferC
 
 	return ResizeOriginal(swapChain, bufferCount, width, height, newFormat, swapChainFlags);
 }
-
 
 bool Render::Initialize() {
 	IDXGISwapChain* swapChain = nullptr;
@@ -913,4 +998,3 @@ bool Render::Initialize() {
 	DISCORD.HookFunction(presentSceneAdress, (uintptr_t)ResizeHook, (uintptr_t)&PresentOriginal);
 	return TRUE;
 }
-

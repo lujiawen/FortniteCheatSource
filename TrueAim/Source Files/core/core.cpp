@@ -42,13 +42,13 @@ namespace Core {
 			return FALSE;
 		}
 
-		auto mesh = ReadPointer(Core::TargetPawn, 0x278);
+		auto mesh = ReadPointer(Core::TargetPawn, 0x280);
 		if (!mesh) {
 			return FALSE;
 		}
 
-		auto bones = ReadPointer(mesh, 0x420);
-		if (!bones) bones = ReadPointer(mesh, 0x420 + 0x10);
+		auto bones = ReadPointer(mesh, 0x478);
+		if (!bones) bones = ReadPointer(mesh, 0x478 + 0x10);
 		if (!bones) {
 			return FALSE;
 		}
@@ -92,8 +92,6 @@ namespace Core {
 		if (object && func) {
 			auto objectName = Util::GetObjectFirstName(object);
 			auto funcName = Util::GetObjectFirstName(func);
-			
-
 
 			do {
 				if (Core::TargetPawn && Core::LocalPlayerController) {
@@ -168,7 +166,6 @@ namespace Core {
 								args.Yaw = (angles[1] - currentRotation.Yaw) / scale + currentRotation.Yaw;
 								ProcessEvent(Core::LocalPlayerController, Offsets::Engine::Controller::ClientSetRotation, &args, 0);
 							}
-
 						}
 					}
 				}
@@ -177,7 +174,7 @@ namespace Core {
 
 		return ProcessEvent(object, func, params, result);
 	}
-	
+
 	PVOID CalculateSpreadHook(PVOID arg0, float* arg1, float* arg2) {
 		if (originalReloadTime != 0.0f) {
 			auto localPlayerWeapon = ReadPointer(Core::LocalPlayerPawn, Offsets::FortniteGame::FortPawn::CurrentWeapon);
@@ -279,12 +276,11 @@ namespace Core {
 		return ret;
 	}
 
-	INT GetViewPointHook(PVOID player, FMinimalViewInfo* viewInfo, BYTE stereoPass) 
+	INT GetViewPointHook(PVOID player, FMinimalViewInfo* viewInfo, BYTE stereoPass)
 	{
 		static HWND TargetWindow = 0;
 		float CurrentSpeed = config_system.item.FreeCamSpeed;
 		TargetWindow = FindWindow((L"UnrealWindow"), (L"Fortnite  "));
-
 
 		auto RotationYaw = viewInfo->Rotation.Yaw * PI / 180.0f;
 		const float FlySpeed = 0.10f;
@@ -321,10 +317,9 @@ namespace Core {
 		if (config_system.item.FOVSlider) {
 			viewInfo->FOV = CurrentFOV;
 		}
-		
+
 		if (config_system.item.SpinBot) {
 			if (Util::SpoofCall(GetAsyncKeyState, config_system.keybind.Spinbot) && Util::SpoofCall(GetForegroundWindow) == TargetWindow) {
-
 				// Freeze Cam
 				viewInfo->Location = CurrentLocation;
 				viewInfo->Rotation.Yaw = CurrentYaw;
@@ -333,7 +328,7 @@ namespace Core {
 				return CurrentViewPoint;
 			}
 			else {
-				// 
+				//
 				CurrentLocation = Util::GetViewInfo().Location;
 				CurrentYaw = viewInfo->Rotation.Yaw;
 				CurrentPitch = viewInfo->Rotation.Pitch;
@@ -363,7 +358,6 @@ namespace Core {
 	}
 
 	BOOLEAN Initialize() {
-
 		// GetWeaponStats
 		auto addr = Util::FindPattern("\x48\x83\xEC\x58\x48\x8B\x91\x00\x00\x00\x00\x48\x85\xD2\x0F\x84\x00\x00\x00\x00\xF6\x81\x00\x00\x00\x00\x00\x74\x10\x48\x8B\x81\x00\x00\x00\x00\x48\x85\xC0\x0F\x85\x00\x00\x00\x00\x48\x8B\x8A\x00\x00\x00\x00\x48\x89\x5C\x24\x00\x48\x8D\x9A\x00\x00\x00\x00\x48\x85\xC9", "xxxxxxx????xxxxx????xx?????xxxxx????xxxxx????xxx????xxxx?xxx????xxx");
 		if (!addr) {
@@ -399,8 +393,5 @@ namespace Core {
 		}
 
 		DISCORD.HookFunction((uintptr_t)addr, (uintptr_t)GetViewPointHook, (uintptr_t)&GetViewPoint);
-
-
-
 	}
 }

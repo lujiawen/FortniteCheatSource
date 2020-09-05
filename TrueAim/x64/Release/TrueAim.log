@@ -1,51 +1,107 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(453,5): warning MSB8004: Das Output-Verzeichnis endet nicht mit einem nachstehenden Schrägstrich. Der Schrägstrich wird in dieser Buildinstanz hinzugefügt, da er für die ordnungsgemäße Auswertung des Output-Verzeichnisses erforderlich ist.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(467,5): warning MSB8028: Das Zwischenverzeichnis (x64\Release\) enthält freigegebene Dateien aus einem anderen Projekt (TrueAim.vcxproj, ZeyroxFN.vcxproj). Dies kann zu einem falschen Bereinigungs- und Neuerstellungsverhalten führen.
-  Assembling spoofinternal.asm...
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1016,5): warning MSB8027: Mehrere Dateien mit dem Namen FortUpdaters.cpp führen zu Ausgaben am selben Speicherort. Dadurch kann ein falsches Buildergebnis entstehen. Die betroffenen Dateien sind Header Files\FortUpdaters\FortUpdaters.cpp, Source Files\FortUpdaters\FortUpdaters.cpp.
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(477,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+C:\Program Files (x86)\Microsoft Visual Studio\2019\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(491,5): warning MSB8028: The intermediate directory (x64\Release\) contains files shared from another project (TrueAim.vcxproj, ZeyroxFN.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+C:\Program Files (x86)\Microsoft Visual Studio\2019\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1044,5): warning MSB8027: Two or more files with the name of FortUpdaters.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are Header Files\FortUpdaters\FortUpdaters.cpp, Source Files\FortUpdaters\FortUpdaters.cpp.
   Config.cpp
-  FortUpdaters.cpp
   core.cpp
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(87,44): warning C4244: "Argument": Konvertierung von "float" in "DWORD", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(330,30): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(331,32): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(332,31): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(338,36): warning C4244: "=": Konvertierung von "float" in "int", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(339,38): warning C4244: "=": Konvertierung von "float" in "int", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\core\core.cpp(340,36): warning C4244: "=": Konvertierung von "float" in "int", möglicher Datenverlust
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Header Files\includes.h(10,1): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp : message : see previous definition of '_CRT_SECURE_NO_WARNINGS'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp(87,44): warning C4244: 'argument': conversion from 'float' to 'DWORD', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp(325,30): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp(326,32): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp(327,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp(333,36): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp(334,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\core\core.cpp(335,36): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   menu.cpp
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(118,33): warning C4305: "Argument": Verkürzung von "double" in "float"
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(120,41): warning C4305: "Argument": Verkürzung von "double" in "float"
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(121,69): warning C4305: "Argument": Verkürzung von "double" in "float"
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(221,45): warning C4305: "=": Verkürzung von "float" in "bool"
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(548,45): warning C4244: "Argument": Konvertierung von "float" in "DWORD", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(701,72): warning C4305: "Argument": Verkürzung von "double" in "float"
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(773,16): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\menu\menu.cpp(788,15): warning C4244: "=": Konvertierung von "int" in "float", möglicher Datenverlust
-  offsets.cpp
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\offsets\offsets.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Header Files\includes.h(10,1): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp : message : see previous definition of '_CRT_SECURE_NO_WARNINGS'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(178,33): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(180,41): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(181,69): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(185,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(186,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(189,158): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(189,60): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(189,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(189,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(190,158): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(190,71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(190,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(190,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(191,166): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(191,79): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(191,74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(191,61): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(192,166): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(192,66): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(192,53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(192,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(193,166): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(193,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(193,72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(193,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(194,166): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(194,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(194,51): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(194,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(195,174): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(195,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(195,78): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(195,63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(196,174): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(196,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(196,78): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(196,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(199,102): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(199,60): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(199,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(199,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(200,102): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(200,71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(200,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(200,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(201,110): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(201,79): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(201,74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(201,61): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(202,110): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(202,66): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(202,53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(202,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(203,110): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(203,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(203,72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(203,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(204,110): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(204,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(204,51): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(204,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(205,118): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(205,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(205,78): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(205,63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(206,118): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(206,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(206,78): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(206,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(240,34): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(241,37): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(243,42): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(244,70): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(897,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\menu\menu.cpp(910,15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   settings.cpp
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\settings\settings.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
-  Util.cpp
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Source Files\util\Util.cpp : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Header Files\includes.h(10,1): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Source Files\settings\settings.cpp : message : see previous definition of '_CRT_SECURE_NO_WARNINGS'
   dllmain.cPP
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\Header Files\includes.h(10,1): warning C4005: "_CRT_SECURE_NO_WARNINGS": Makro-Neudefinition
-C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\dllmain.cPP : message : Siehe vorherige Definition von "_CRT_SECURE_NO_WARNINGS"
-  imgui.cpp
-  imgui_draw.cpp
-  imgui_impl_dx11.cpp
-x64\Release\FortUpdaters.obj : warning LNK4042: Objekt mehrmals angegeben; zusätzliche Objekte werden ignoriert.
-     Bibliothek ".\x64\Release\Release\TrueAim.lib" und Objekt ".\x64\Release\Release\TrueAim.exp" werden erstellt.
-LINK : warning LNK4098: Standardbibliothek "LIBCMT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULTLIB:Bibliothek verwenden.
-  Code wird generiert.
-  3 of 1580 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\Header Files\includes.h(10,1): warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
+C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\dllmain.cPP : message : see previous definition of '_CRT_SECURE_NO_WARNINGS'
+x64\Release\FortUpdaters.obj : warning LNK4042: object specified more than once; extras ignored
+     Creating library .\x64\Release\Release\TrueAim.lib and object .\x64\Release\Release\TrueAim.exp
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Generating code
+  0 of 1509 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    22 functions had inline decision re-evaluated but remain unchanged
-  Codegenerierung ist abgeschlossen.
-  TrueAim.vcxproj -> C:\Users\ytmcg\OneDrive\Desktop\lovefn src\TrueAim\.\x64\Release\Release\TrueAim.dll
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  TrueAim.vcxproj -> C:\Users\ytmcg\source\repos\FortniteCheatExample\TrueAim\.\x64\Release\Release\TrueAim.dll

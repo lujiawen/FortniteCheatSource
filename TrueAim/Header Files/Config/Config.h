@@ -20,14 +20,23 @@ public:
 		// item
 
 		bool Players;
+		bool FPS;
 		bool Chest;
 		bool PlayerBox;
 		bool PlayersCorner;
+		bool Info;
 		bool Llama;
 		bool PlayerLines;
+		bool Vehicle;
+		bool debug2;
 		bool ClosestLineESP;
 		int PlayerLinesLocation;
 		bool PlayerNames;
+		float PlayerNameVisibleColor[4];
+		float PlayerNameNotVisibleColor[4];
+		float PlayerNameColor[4];
+		float BoxVisibleColor[4];
+		float BoxNotVisibleColor[4];
 		float PlayerVisibleColor[3];
 		float PlayerNotVisibleColor[3];
 		bool kazoisgay;
@@ -50,6 +59,7 @@ public:
 		bool AutoAimbot;
 		bool SilentAimbot;
 		bool FlickAimbot;
+		bool CornerSize;
 		bool SpinBot;
 		bool AutoAim;
 		bool SpamAutoAim;
@@ -83,7 +93,6 @@ public:
 		bool FOVSlider;
 		float FOV;
 		bool Extra;
-
 	} item;
 
 	struct {
@@ -100,7 +109,6 @@ public:
 		int Airstuck1 = 0;
 		int Airstuck2 = 0;
 		int BetterMap = 0;
-
 	} keybind;
 
 private:

@@ -1,4 +1,3 @@
-
 //
 // love fn sucks
 // paulgamer stop pasteing plz
@@ -31,6 +30,7 @@ namespace SettingsHelper {
 		config_system.item.AimPoint = 0;
 		config_system.item.Aimbot = true;
 		config_system.item.SilentAimbot = false;
+		config_system.item.debug2 = false;
 		config_system.item.FlickAimbot = false;
 		config_system.item.SpinBot = false;
 		config_system.item.AutoAim = false;
@@ -42,14 +42,17 @@ namespace SettingsHelper {
 		config_system.item.RapidFire = false;
 		config_system.item.BulletTP = false;
 		config_system.item.ARTP = false;
+		config_system.item.Info = true;
 		config_system.item.BoatRocketTP = false;
 		config_system.item.RocketTP = false;
 		config_system.item.BetterMap = false;
 		config_system.item.ThirdPerson = true;
 		config_system.item.AirStuck = false;
 		config_system.item.AntiAim = false;
+		config_system.item.Vehicle = true;
 		config_system.item.FreeCamRotationLock = false;
 		config_system.item.FreeCam = false;
+		config_system.item.FPS = true;
 		config_system.item.FreeCamSpeed = 1.00f;
 		config_system.item.CheckVisible = true;
 		config_system.item.AimbotFOV = 200.0f;
@@ -63,6 +66,7 @@ namespace SettingsHelper {
 		config_system.item.CrosshairSize = 0.0f;
 		config_system.item.CrosshairThickness = 0.0f;
 		config_system.item.AimbotFOV = true;
+		config_system.item.CornerSize = false;
 		config_system.item.Players = true;
 		config_system.item.PlayerBox = true;
 		config_system.item.PlayersCorner = false;
@@ -91,6 +95,14 @@ namespace SettingsHelper {
 		config_system.item.LineESP[0] = 0.46f;
 		config_system.item.LineESP[1] = 0.0f;
 		config_system.item.LineESP[2] = 0.0f;
+		config_system.item.BoxVisibleColor[0] = 210;
+		config_system.item.BoxVisibleColor[1] = 210;
+		config_system.item.BoxVisibleColor[2] = 210;
+		config_system.item.BoxVisibleColor[3] = 255;
+		config_system.item.BoxNotVisibleColor[0] = 210;
+		config_system.item.BoxNotVisibleColor[1] = 0;
+		config_system.item.BoxNotVisibleColor[2] = 0;
+		config_system.item.BoxNotVisibleColor[3] = 255;
 		config_system.item.Ammo = true;
 		config_system.item.Chest = true;
 		config_system.item.Llama = true;
